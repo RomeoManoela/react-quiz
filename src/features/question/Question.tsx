@@ -1,7 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store.ts';
 import { questionType } from '../../utils/type.ts';
-import { setIsAnswered, setStatus, setTotalPoints } from './questionSlice.ts';
+import {
+  setCurrentOption,
+  setIsAnswered,
+  setStatus,
+  setTotalPoints,
+} from './questionSlice.ts';
 import { useEffect } from 'react';
 
 function Question() {
@@ -17,13 +22,15 @@ function Question() {
   );
   const handleRespond = (id: number) => {
     dispatch(setIsAnswered(true));
+    dispatch(setCurrentOption(id));
     if (id === question.correctOption) {
       dispatch(setTotalPoints(question.points));
     }
-    if (id === 14) setStatus('finished');
+    if (currentQuestion === 14) dispatch(setStatus('finished'));
   };
   useEffect(() => {
     dispatch(setIsAnswered(false));
+    dispatch(setCurrentOption(null));
   }, [dispatch, currentQuestion]);
 
   return (
@@ -44,6 +51,7 @@ function Question() {
             {option}
           </button>
         ))}
+        <p className={'text-right'}>{question.points} points</p>
       </div>
     </div>
   );

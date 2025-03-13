@@ -6,14 +6,12 @@ export interface questionType {
   question: string;
 }
 
-export interface questionsType {
-  questions: questionType[];
-}
-
 export interface questionState {
   questions: questionType[];
   currentQuestion: number;
   totalPoints: number;
+  currentOption: number | null;
+  isStarted: boolean;
   isAnswered: boolean;
   status: string;
   error: string;

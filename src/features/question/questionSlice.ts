@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { questionState } from '../../utils/type.ts';
+import { RootState } from '../../store.ts';
 
 export const fetchQuestions = createAsyncThunk(
   'questions/fetchQuestions',
@@ -13,6 +14,8 @@ export const fetchQuestions = createAsyncThunk(
 const initialState: questionState = {
   questions: [],
   currentQuestion: 0,
+  currentOption: null,
+  isStarted: false,
   totalPoints: 0,
   isAnswered: false,
   status: 'idle',
@@ -35,6 +38,21 @@ const questionSlice = createSlice({
     setStatus: (state, action) => {
       state.status = action.payload;
     },
+    setCurrentOption: (state, action) => {
+      state.currentOption = action.payload;
+    },
+    restartQuiz: (state) => {
+      state.currentQuestion = 0;
+      state.currentOption = null;
+      state.totalPoints = 0;
+      state.isStarted = true;
+      state.isAnswered = false;
+      state.status = 'idle';
+      state.error = '';
+    },
+    setIsStarted: (state, action) => {
+      state.isStarted = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -53,5 +71,18 @@ const questionSlice = createSlice({
 });
 
 export default questionSlice.reducer;
-export const { nextQuestion, setTotalPoints, setIsAnswered, setStatus } =
-  questionSlice.actions;
+export const {
+  nextQuestion,
+  setTotalPoints,
+  setIsAnswered,
+  setStatus,
+  setCurrentOption,
+  restartQuiz,
+  setIsStarted,
+} = questionSlice.actions;
+
+export const getTotalPoints = (state: RootState) =>
+  state.questions.questions.reduce(
+    (total, question) => total + question.points,
+    0,
+  );
